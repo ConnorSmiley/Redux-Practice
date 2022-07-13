@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { postsAdded } from "@/redux/features/postSlice";
-import { nanoid } from "@reduxjs/toolkit";
 import styled from "styled-components";
 import tw from "twin.macro";
+import { allUsers } from "@/redux/features/Users/usersSlice";
 
 
 const FormContainer = styled.div`
@@ -81,6 +81,15 @@ const Button = styled.button`
     text-xl
     font-extrabold
     my-4
+    hover:cursor-pointer
+    hover:bg-pink-200
+    
+    `}
+`
+const Select = styled.select`
+    ${tw`
+    text-black
+    text-xl
     
     `}
 `
@@ -88,24 +97,31 @@ const Button = styled.button`
 export default function AddPostForm() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [users, setUsers] = useState("");
+  const user = useSelector(allUsers)
   const dispatch = useDispatch();
 
   const changeTitle = (e: any) => setTitle(e.target.value);
   const changeContent = (e: any) => setContent(e.target.value);
+  const changeUsers = (e:any) => setUsers(e.target.value)
 
   const onSave = () => {
     if (title && content) {
       dispatch(
-        postsAdded({
-          id: nanoid(),
-          title,
-          content
-        })
+        postsAdded(title, content, users)
       );
       setTitle("");
       setContent("");
     }
   };
+
+  const canSave = Boolean(title) && Boolean(content) && Boolean(users)
+
+  const usersMapped = user.map(x => (
+    <option key={x.id} value ={x.id}>
+      {x.name}
+    </option>
+  ))
 
   return (
     <FormContainer>
@@ -120,13 +136,25 @@ export default function AddPostForm() {
               value={title}
               onChange={changeTitle}
             />
+            <Select
+              id="postAuthor"
+              value={users}
+              onChange={changeUsers}
+            >
+              <option value=""></option>
+              {usersMapped}
+            </Select>
             <Textarea
               id="postContent"
               name="postContent"
               value={content}
               onChange={changeContent}
             />
-            <Button type="button" onClick={onSave}>save</Button>
+            <Button
+              type="button"
+              onClick={onSave}
+              disabled={!canSave}
+            >save</Button>
           </Form>
         </Section>
       </FormStyles>
