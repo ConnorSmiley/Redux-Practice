@@ -6,6 +6,7 @@ import { allPosts } from "@/redux/features/postSlice";
 import AddPostForm from "@/redux/features/AddPostForm";
 import PostAuthor from "@/redux/features/Users/postAuthor";
 import TimeAgo from "@/redux/features/TimeAgo";
+import ReactionButtons from "@/redux/features/ReactionButtons";
 
 const Container = styled.div`
   ${tw`
@@ -88,6 +89,7 @@ export default function PostList() {
             <PostAuthor userId={x.userId} />
             <TimeAgo timestamp={x.date} />
           </AuthorTime>
+          <ReactionButtons post={x}/>
         </article>
       </MappedStyles>
     </MappedContainer>
