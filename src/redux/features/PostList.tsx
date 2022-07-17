@@ -1,12 +1,13 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import tw from "twin.macro";
-import { allPosts } from "@/redux/features/postSlice";
+import { allPosts, getPostsStatus, getPostsError, fetchPosts } from "@/redux/features/postSlice";
 import AddPostForm from "@/redux/features/AddPostForm";
 import PostAuthor from "@/redux/features/Users/postAuthor";
 import TimeAgo from "@/redux/features/TimeAgo";
 import ReactionButtons from "@/redux/features/ReactionButtons";
+import { useEffect } from "react";
 
 const Container = styled.div`
   ${tw`
@@ -74,8 +75,20 @@ const AuthorTime = styled.div`
 
 export default function PostList() {
   const posts = useSelector(allPosts);
+  const postStatus = useSelector(getPostsStatus);
+  const error = useSelector(getPostsError);
+  const postsFetch = useSelector(fetchPosts);
+  const dispatch = useDispatch();
 
-  const orderPosts = posts.slice().sort((a:any,b:any) => b.date.localeCompare(a.date))
+  useEffect(() => {
+    if (postStatus === "idle")
+      {
+      dispatch(fetchPosts());
+      }
+  }, [postStatus, dispatch]);
+
+
+  const orderPosts = posts.slice().sort((a: any, b: any) => b.date.localeCompare(a.date));
 
   const mapped = orderPosts.map(x => (
     <MappedContainer>
@@ -89,7 +102,7 @@ export default function PostList() {
             <PostAuthor userId={x.userId} />
             <TimeAgo timestamp={x.date} />
           </AuthorTime>
-          <ReactionButtons post={x}/>
+          <ReactionButtons post={x} />
         </article>
       </MappedStyles>
     </MappedContainer>
