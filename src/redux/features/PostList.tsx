@@ -7,6 +7,7 @@ import AddPostForm from "@/redux/features/AddPostForm";
 import PostAuthor from "@/redux/features/Users/postAuthor";
 import TimeAgo from "@/redux/features/TimeAgo";
 import ReactionButtons from "@/redux/features/ReactionButtons";
+
 import { useEffect } from "react";
 
 const Container = styled.div`
@@ -90,7 +91,7 @@ export default function PostList() {
 
   const orderPosts = posts.slice().sort((a: any, b: any) => b.date.localeCompare(a.date));
 
-  const mapped = orderPosts.map(x => (
+  const mapped = orderPosts.slice(0,5).map(x => (
     <MappedContainer>
       <MappedStyles>
         <article key={x.id}>
